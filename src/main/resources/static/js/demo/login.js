@@ -18,6 +18,10 @@ async function iniciarSesion() {
 
   console.log(content);
 
-  if (content === 'OK') window.location.href = 'usuarios.html';
-  else alert('Las credenciales son incorrectas. Por favor intente nuevamente.');
+  if (content != 'FAIL') {
+    window.localStorage.token = content;
+    window.localStorage.email = datos.email;
+    window.location.href = 'usuarios.html';
+  } else
+    alert('Las credenciales son incorrectas. Por favor intente nuevamente.');
 }

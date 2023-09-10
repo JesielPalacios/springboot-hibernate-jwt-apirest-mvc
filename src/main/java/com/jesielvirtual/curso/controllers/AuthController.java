@@ -2,6 +2,7 @@ package com.jesielvirtual.curso.controllers;
 
 import com.jesielvirtual.curso.dao.UsuarioDao;
 import com.jesielvirtual.curso.models.Usuario;
+import com.jesielvirtual.curso.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +15,17 @@ public class AuthController {
     @Autowired
     private UsuarioDao usuarioDao;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
     @RequestMapping(value = "api/login", method = RequestMethod.POST)
     public String login(@RequestBody Usuario usuario) {
-        if (usuarioDao.verificarCredenciales(usuario)) {
-            return "OK";
+
+        Usuario usuarioDelLogin = usuarioDao.obtenerUsuarioPorCredenciales(usuario);
+        if (usuarioDelLogin != null) {
+
+            String tokenJwt = jwtUtil.create(String.valueOf(usuarioDelLogin.getId()), usuarioDelLogin.getEmail());
+            return tokenJwt;
         }
 
         return "FAIL";
