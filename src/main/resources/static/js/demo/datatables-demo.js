@@ -1,22 +1,23 @@
 // Call the dataTables jQuery plugin
-$(document).ready(function() {
-  cargarUsuarios()
+$(document).ready(function () {
+  cargarUsuarios();
 
   $('#dataTable').DataTable();
 });
 
 async function cargarUsuarios() {
-    const rawResponse = await fetch('api/usuarios')
+  const rawResponse = await fetch('api/usuarios', {
+    headers: {
+      Authorization: window.localStorage.token,
+    },
+  });
 
-    const usuarios = await rawResponse.json()
+  const usuarios = await rawResponse.json();
 
-    console.log(rawResponse);
-    console.log(usuarios);
+  let listadoHtml = '';
 
-    let listadoHtml = ''
-
-    for (let usuario of usuarios) {
-        let usuarioHtml = `
+  for (let usuario of usuarios) {
+    let usuarioHtml = `
           <tr>
           <td>${usuario.id}</td>
           <td>${usuario.nombre + ' ' + usuario.apellido}</td>
@@ -27,49 +28,49 @@ async function cargarUsuarios() {
                   <i class="fas fa-pencil-fill"></i>
               </a>
       
-              <a href="#" onClick="eliminarUsuario('${usuario.id}')" class="btn btn-danger btn-circle btn-sm">
+              <a href="#" onClick="eliminarUsuario('${
+                usuario.id
+              }')" class="btn btn-danger btn-circle btn-sm">
                   <i class="fas fa-trash"></i>
               </a>
           </td>
         </tr>
-        `
+        `;
 
-        listadoHtml += usuarioHtml
-    }
+    listadoHtml += usuarioHtml;
+  }
 
-  document.querySelector('#tablaUsuarios tbody').outerHTML = listadoHtml
+  document.querySelector('#tablaUsuarios tbody').outerHTML = listadoHtml;
 }
 
-async function eliminarUsuario (idUsuario) {
+async function eliminarUsuario(idUsuario) {
+  if (!confirm('¿Desea eliminar este usuario?')) {
+    return;
+  }
+  await fetch('api/usuario/' + idUsuario, {
+    method: 'DELETE',
+    headers: {
+      Authorization: window.localStorage.token,
+    },
+  });
 
-    if (!confirm('¿Desea eliminar este usuario?')) {
-        return
-    }
-    const rawResponse = await fetch('api/usuario/'+ idUsuario, {
-        method: 'DELETE'
-    });
-
-    //const data = await rawResponse.json();
-
-    //console.log(rawResponse);
-    //console.log(data);
-
-    cargarUsuarios()
-    //location.reload()
+  cargarUsuarios();
+  //location.reload()
 }
 
-function crearUsuario() {
-  (async () => {
-    const rawResponse = await fetch('https://httpbin.org/post', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({a: 1, b: 'Textual content'})
-    });
-    const content = await rawResponse.json();
+// function crearUsuario() {
+//   (async () => {
+//     const rawResponse = await fetch('https://httpbin.org/post', {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/json',
+//         'Content-Type': 'application/json',
+//         Authorization: window.localStorage.token,
+//       },
+//       body: JSON.stringify({ a: 1, b: 'Textual content' }),
+//     });
+//     const content = await rawResponse.json();
 
-    console.log(content);
-  })();
-}
+//     console.log(content);
+//   })();
+// }
