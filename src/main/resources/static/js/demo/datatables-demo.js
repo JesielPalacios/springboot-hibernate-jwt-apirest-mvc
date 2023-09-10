@@ -6,9 +6,11 @@ $(document).ready(function() {
 });
 
 async function cargarUsuarios() {
-    const rawResponse = await fetch('usuarios')
+    const rawResponse = await fetch('api/usuarios')
+
     const usuarios = await rawResponse.json()
 
+    console.log(rawResponse);
     console.log(usuarios);
 
     let listadoHtml = ''
@@ -25,17 +27,35 @@ async function cargarUsuarios() {
                   <i class="fas fa-pencil-fill"></i>
               </a>
       
-              <a href="#" class="btn btn-danger btn-circle btn-sm">
+              <a href="#" onClick="eliminarUsuario('${usuario.id}')" class="btn btn-danger btn-circle btn-sm">
                   <i class="fas fa-trash"></i>
               </a>
           </td>
         </tr>
         `
 
-        litstadoHtml += usuarioHtml
+        listadoHtml += usuarioHtml
     }
 
-  document.querySelector('#tablaUsuarios tbody').outerHTML = usuarioHtml
+  document.querySelector('#tablaUsuarios tbody').outerHTML = listadoHtml
+}
+
+async function eliminarUsuario (idUsuario) {
+
+    if (!confirm('¿Desea eliminar este usuario?')) {
+        return
+    }
+    const rawResponse = await fetch('api/usuario/'+ idUsuario, {
+        method: 'DELETE'
+    });
+
+    //const data = await rawResponse.json();
+
+    //console.log(rawResponse);
+    //console.log(data);
+
+    cargarUsuarios()
+    //location.reload()
 }
 
 function crearUsuario() {
