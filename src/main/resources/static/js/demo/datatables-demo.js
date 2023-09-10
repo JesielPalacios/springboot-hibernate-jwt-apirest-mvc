@@ -1,9 +1,35 @@
 // Call the dataTables jQuery plugin
 $(document).ready(function () {
-  cargarUsuarios();
-
-  $('#dataTable').DataTable();
+  verificarToken();
 });
+
+function verificarToken() {
+  if (window.localStorage.token != undefined) {
+    cargarUsuarios();
+    actualizarEmailDelUsuario();
+
+    $('#dataTable').DataTable();
+  } else {
+    window.location.href = 'login.html';
+  }
+}
+
+function cerrarSesion() {
+  // window.localStorage.token = undefined;
+  // window.localStorage.email = undefined;}
+  window.localStorage.removeItem('token');
+  window.localStorage.removeItem('email');
+  // window.location.href = 'login.html';
+}
+
+function actualizarEmailDelUsuario() {
+  if (window.localStorage.email) {
+    document.getElementById('currentUserEmail').outerHTML =
+      window.localStorage.email;
+  } else {
+    document.getElementById('currentUserEmail').outerHTML = 'Invitado';
+  }
+}
 
 async function cargarUsuarios() {
   const rawResponse = await fetch('api/usuarios', {

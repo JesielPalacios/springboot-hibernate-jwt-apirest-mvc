@@ -2,6 +2,7 @@ package com.jesielvirtual.curso.controllers;
 
 import com.jesielvirtual.curso.dao.UsuarioDao;
 import com.jesielvirtual.curso.models.Usuario;
+import com.jesielvirtual.curso.utils.JWTUtil;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioDao usuarioDao;
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     @RequestMapping(value = "api/usuario/{usuarioId}")
     public Usuario obtenerUnUsuario(@PathVariable Long usuarioId) {
@@ -31,8 +35,23 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "api/usuarios")
-    public List<Usuario> obtenerTodosLosUsuarios() {
+    public List<Usuario> obtenerTodosLosUsuarios(@RequestHeader(value = "Authorization") String token) {
+
+        /*String usuarioId = jwtUtil.getKey(token);
+
+        if (usuarioId == null)  {
+            return new ArrayList<>();
+
+        }*/
+
+        if (!validarToken(token)) return null;
+
         return usuarioDao.getUsuarios();
+    }
+
+    private boolean validarToken(String token) {
+        String usuarioId = jwtUtil.getKey(token);
+        return usuarioId != null;
     }
 
     @RequestMapping(value = "api/usuarios", method = RequestMethod.POST)
@@ -59,20 +78,9 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "api/usuario/{usuarioId}", method = RequestMethod.DELETE)
-    public void eliminar(@PathVariable Long usuarioId) {
+    public void eliminar(@PathVariable Long usuarioId, @RequestHeader(value = "Authorization") String token) {
+        if (!validarToken(token)) return;
+
         usuarioDao.eliminar(usuarioId);
-    }
-
-    @RequestMapping(value = "usuario3")
-    public Usuario buscar() {
-        Usuario usuario = new Usuario();
-
-        usuario.setNombre("Pepito");
-        usuario.setApellido("Perez");
-        usuario.setEmail("pepito.perez@gmail.com");
-        usuario.setTelefono("1234567890");
-        usuario.setPassword("asdasdasd");
-
-        return usuario;
     }
 }
