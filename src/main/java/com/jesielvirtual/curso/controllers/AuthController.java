@@ -18,7 +18,7 @@ public class AuthController {
     @Autowired
     private JWTUtil jwtUtil;
 
-    @RequestMapping(value = "api/login", method = RequestMethod.POST)
+    @RequestMapping(value = "api/inicio-sesion", method = RequestMethod.POST)
     public String login(@RequestBody Usuario usuario) {
 
         Usuario usuarioDelLogin = usuarioDao.obtenerUsuarioPorCredenciales(usuario);

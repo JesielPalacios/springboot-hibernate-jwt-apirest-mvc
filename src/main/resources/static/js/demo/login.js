@@ -5,7 +5,7 @@ async function iniciarSesion() {
   datos.password = document.getElementById('contrasenaLogin').value;
 
   console.log('datos', datos);
-  const rawResponse = await fetch('api/login', {
+  const rawResponse = await fetch('api/inicio-sesion', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -13,7 +13,8 @@ async function iniciarSesion() {
     },
     body: JSON.stringify(datos),
   });
-
+  
+  console.log('rawResponse', rawResponse)
   const content = await rawResponse.text();
 
   console.log(content);
@@ -21,7 +22,7 @@ async function iniciarSesion() {
   if (content != 'FAIL') {
     window.localStorage.token = content;
     window.localStorage.email = datos.email;
-    window.location.href = 'usuarios.html';
+    window.location.href = 'index.html';
   } else
     alert('Las credenciales son incorrectas. Por favor intente nuevamente.');
 }
